@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "jsm/controls/OrbitControls.js";
 import getStarfield from "./src/getStarfield.js";
+import { getFresnelMat } from "./src/getFresnelMat.js";
+
 const w = window.innerWidth;
 const h = window.innerHeight;
 const scene = new THREE.Scene();
@@ -42,11 +44,16 @@ scene.add(grupo);
 //Luces
 const lucesMat = new THREE.MeshBasicMaterial({
   color: 0xffa500,
-  opacity: 0.4,
-  transparent: true,
+  opacity: 1,
 });
+
+//Aro
+const Aro = getFresnelMat();
+const AroGlow = new THREE.Mesh(geometry, Aro);
+grupo.add(AroGlow);
 const luces = new THREE.Mesh(geometry, lucesMat);
 grupo.add(luces);
+AroGlow.scale.setScalar(1.03);
 //Extras
 const sunLight = new THREE.DirectionalLight(0xffffff, 41.0);
 sunLight.position.set(-1, 0.5, 2.5);
@@ -54,8 +61,9 @@ scene.add(sunLight);
 
 function animate() {
   requestAnimationFrame(animate);
-  earthMesh.rotation.y += 0.002;
-  luces.rotation.y += 0.002;
+  earthMesh.rotation.y += 0.0122;
+  luces.rotation.y += 0.0121;
+  AroGlow.rotation.y += 0.0121;
   renderer.render(scene, camera);
 }
 
