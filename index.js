@@ -1,48 +1,41 @@
-// Configuración básica de la escena
+import * as THREE from "three";
+import { OrbitControls } from "jsm/controls/OrbitControls.js";
+
 const w = window.innerWidth;
 const h = window.innerHeight;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
 camera.position.z = 5;
-
-// Configuración del renderer
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(w, h);
 document.body.appendChild(renderer.domElement);
 
-// Creación de un cubo
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshStandardMaterial({
-  color: 0xffff00,
+new OrbitControls(camera, renderer.domElement);
+
+const loader = new THREE.TextureLoader();
+const geometry = new THREE.IcosahedronGeometry(1, 12);
+const material = new THREE.MeshPhongMaterial({
+  map: loader.load("./shader/sunmap.jpg"),
+  bumpScale: 0.04,
 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+const earthMesh = new THREE.Mesh(geometry, material);
+scene.add(earthMesh);
 
-// Configuración de la luz
-const hemiLight = new THREE.HemisphereLight();
-scene.add(hemiLight);
+const sunLight = new THREE.DirectionalLight(0xffffff, 2.0);
+sunLight.position.set(-2, 0.5, 1.5);
+scene.add(sunLight);
 
-// Función de animación
 function animate() {
   requestAnimationFrame(animate);
-
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.02;
-
+  earthMesh.rotation.y += 0.002;
   renderer.render(scene, camera);
 }
 
-// Manejar el redimensionamiento de la ventana
-function handleWindowResize() {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
-  renderer.setSize(w, h);
-}
-
-// Añadir evento de redimensionamiento de la ventana
-window.addEventListener("resize", handleWindowResize);
-
-// Inicia la animación
 animate();
+
+function handleWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+window.addEventListener("resize", handleWindowResize, false);

@@ -3,20 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>3D Scene with THREE.js</title>
+    <title>Robot Bobby Earth</title>
     <style>
       body {
         margin: 0;
-        background-color: #000000;
-        overflow: hidden;
       }
     </style>
-    <!-- Carga de THREE.js desde CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Carga del script de los controles -->
-    <script src="../libs/jsm143/controls/OrbitControls.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.161/build/three.module.js",
+          "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161/examples/jsm/"
+        }
+      }
+    </script>
   </head>
   <body>
-    <script src="index.js"></script>
+    <script type="module" src="index.js"></script>
   </body>
 </html>
