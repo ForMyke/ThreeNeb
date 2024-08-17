@@ -12,17 +12,17 @@ document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
 
+const estrellas = new THREE.Group();
 const loader = new THREE.TextureLoader();
 const geometry = new THREE.IcosahedronGeometry(1, 12);
 const material = new THREE.MeshPhongMaterial({
   map: loader.load("./shader/sunmap.jpg"),
-  bumpScale: 0.04,
 });
 const earthMesh = new THREE.Mesh(geometry, material);
 scene.add(earthMesh);
 
-const sunLight = new THREE.DirectionalLight(0xffffff, 2.0);
-sunLight.position.set(-2, 0.5, 1.5);
+const sunLight = new THREE.DirectionalLight(0xffffff, 11.0);
+sunLight.position.set(-1, 0.5, 2.5);
 scene.add(sunLight);
 
 function animate() {
