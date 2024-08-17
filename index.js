@@ -14,10 +14,10 @@ renderer.setSize(w, h);
 document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
-const estrellas = getStarfield({ numStars: 14000 });
 
-//add stars
+const estrellas = getStarfield({ numStars: 10000 });
 scene.add(estrellas);
+
 const loader = new THREE.TextureLoader();
 const geometry = new THREE.IcosahedronGeometry(1, 12);
 const material = new THREE.MeshPhongMaterial({
@@ -26,7 +26,7 @@ const material = new THREE.MeshPhongMaterial({
     function (texture) {
       console.log("Texture loaded successfully");
       material.map = texture;
-      animate(); // Solo empezar la animación cuando la textura esté cargada
+      animate();
     },
     undefined,
     function (err) {
@@ -35,35 +35,57 @@ const material = new THREE.MeshPhongMaterial({
   ),
 });
 
-const earthMesh = new THREE.Mesh(geometry, material);
-scene.add(earthMesh);
+const sunMesh = new THREE.Mesh(geometry, material);
+scene.add(sunMesh);
 
-//Contenido
 const grupo = new THREE.Group();
 scene.add(grupo);
-//Luces
+
 const lucesMat = new THREE.MeshBasicMaterial({
   color: 0xffa500,
   opacity: 1,
 });
 
-//Aro
-const Aro = getFresnelMat();
-const AroGlow = new THREE.Mesh(geometry, Aro);
-grupo.add(AroGlow);
+const numberOfRings = 4;
+const rings = [];
+
+// Añadir los anillos originales
+for (let i = 1; i <= numberOfRings; i++) {
+  const Aro = getFresnelMat();
+  const AroGlow = new THREE.Mesh(geometry, Aro);
+  AroGlow.scale.setScalar(1.05 + i * 0.35);
+
+  if (i % 2 !== 0) {
+    AroGlow.rotation.x = THREE.MathUtils.degToRad(45); // 45 grados
+  }
+
+  grupo.add(AroGlow);
+  rings.push(AroGlow); // Almacena los aros para manipular su rotación por separado
+}
+
+// Añadir un nuevo aro con escala 1.01
+const additionalAro = getFresnelMat();
+const additionalAroGlow = new THREE.Mesh(geometry, additionalAro);
+additionalAroGlow.scale.setScalar(1.04);
+grupo.add(additionalAroGlow);
+rings.push(additionalAroGlow); // Añadirlo al array de aros para rotación
+
+// Añadir las luces (representando los electrones) al grupo
 const luces = new THREE.Mesh(geometry, lucesMat);
 grupo.add(luces);
-AroGlow.scale.setScalar(1.03);
-//Extras
-const sunLight = new THREE.DirectionalLight(0xffffff, 41.0);
-sunLight.position.set(-1, 0.5, 2.5);
-scene.add(sunLight);
+
+const sunLight = new THREE.DirectionalLight(0xffffff, 4.0);
 
 function animate() {
   requestAnimationFrame(animate);
-  earthMesh.rotation.y += 0.0122;
-  luces.rotation.y += 0.0121;
-  AroGlow.rotation.y += 0.0121;
+  sunMesh.rotation.y += 0.001111;
+
+  // Rotacion
+  rings.forEach((ring) => {
+    ring.rotation.x += 0.51;
+    ring.rotation.y += 1001;
+  });
+
   renderer.render(scene, camera);
 }
 
@@ -73,5 +95,3 @@ function handleWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 window.addEventListener("resize", handleWindowResize, false);
-
-// Iniciar la animación solo si la textura se carga correctamente
