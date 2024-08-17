@@ -12,10 +12,10 @@ renderer.setSize(w, h);
 document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
-const stars = getStarfield();
+const estrellas = getStarfield({ numStars: 14000 });
 
 //add stars
-scene.add(stars);
+scene.add(estrellas);
 const loader = new THREE.TextureLoader();
 const geometry = new THREE.IcosahedronGeometry(1, 12);
 const material = new THREE.MeshPhongMaterial({
@@ -36,6 +36,18 @@ const material = new THREE.MeshPhongMaterial({
 const earthMesh = new THREE.Mesh(geometry, material);
 scene.add(earthMesh);
 
+//Contenido
+const grupo = new THREE.Group();
+scene.add(grupo);
+//Luces
+const lucesMat = new THREE.MeshBasicMaterial({
+  color: 0xffa500,
+  opacity: 0.4,
+  transparent: true,
+});
+const luces = new THREE.Mesh(geometry, lucesMat);
+grupo.add(luces);
+//Extras
 const sunLight = new THREE.DirectionalLight(0xffffff, 41.0);
 sunLight.position.set(-1, 0.5, 2.5);
 scene.add(sunLight);
@@ -43,6 +55,7 @@ scene.add(sunLight);
 function animate() {
   requestAnimationFrame(animate);
   earthMesh.rotation.y += 0.002;
+  luces.rotation.y += 0.002;
   renderer.render(scene, camera);
 }
 
